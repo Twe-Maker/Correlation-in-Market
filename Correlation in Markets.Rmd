@@ -1,0 +1,109 @@
+---
+title: "Correlation in Markets"
+author: "Jay"
+date: "10.3.2022"
+output: html_document
+params:
+  dataset: "Correlation in markets"
+---
+
+```{r setup, include=FALSE}
+# Libraries
+library(readxl)
+library(ggplot2)
+library(ggpubr)
+library("cowplot")
+library(reshape2)
+library(dplyr)
+
+#Case study for Cronos
+Case_study <- read_excel("W:/Data Crypto/Kaggle(Kash)/Case_Study.xlsx", sheet = 2)
+#View(Case_study)
+# Case Study for Bitcoin
+Case_study_2 <- read_excel("W:/Data Crypto/Kaggle(Kash)/Case_Study.xlsx", sheet = 3)
+#View(Case_study_2)
+# Case Study for OMXH25
+Case_study_3 <- read_excel("W:/Data Crypto/Kaggle(Kash)/Case_Study.xlsx", sheet = 1)
+#View(Case_study_3)
+# Case Study for SPY
+Case_study_4 <- read_excel("W:/Data Crypto/Kaggle(Kash)/Case_Study.xlsx", sheet = 4)
+#View(Case_study_4)
+
+# Cronos
+CS1 <- ggplot(Case_study)+
+  geom_line(aes(x=Date, y=Close, col = Close))
+
+# Bitcoin
+CS2 <- ggplot(Case_study_2)+
+  geom_line(mapping = aes(x=Date, y=Close, col=Close))
+
+# OMXH25
+CS3 <- ggplot(Case_study_3)+
+  geom_line(mapping = aes(x=Date, y=Closingprice, col=Closingprice))
+
+# SPY
+CS4 <- ggplot(Case_study_4)+
+  geom_line(mapping = aes(x=Date, y=Close, col=Close))
+
+# Rename
+CS3.2 <- print(CS3 + labs(y = "Close",x = "Date", colour = "Closingprice"))
+CS3.3 <- print(CS3.2 + labs(colour = "Close"))
+```
+
+## Question
+Is there any correlation among OMXH25,SPY,Bitcoin and Cronos?
+
+
+## Plot 
+
+### All 4 Graph
+```{r, echo=FALSE}
+ggarrange(CS2, CS1, CS3.3, CS4,
+          labels = c("Bitcoin", "Cronos", "OMXH25", "SPY"),
+          ncol = 2, nrow = 2)
+```
+
+
+### Correlation Cronos,Bitcoin,and OMXH25
+```{r, echo=FALSE}
+ggarrange(CS3.3,
+          ggarrange(CS1, CS2, ncol = 2, labels = c("Cronos", "Bitcoin")),
+          nrow = 2,
+          labels = "OMXH25")
+```
+There is little correlation with 
+
+### Correlation Cronos, Bitcoin, and OMXH25
+```{r, echo=FALSE}
+ggdraw() +
+  draw_plot(CS1, x = 0, y = .5, width = .5, height = .5) +
+  draw_plot(CS2, x = .5, y = .5, width = .5, height = .5) +
+  draw_plot(CS3.3, x = 0, y = 0, width = 1, height = 0.5) +
+  draw_plot_label(label = c("Cronos", "Bitcoin", "OMXH25"), size = 15,
+                  x = c(0, 0.5, 0), y = c(1, 1, 0.5))
+```
+
+
+### Correlation between Bitcoin and OMXH25
+```{r, echo=FALSE}
+ggarrange(CS2, CS3.3, 
+          labels = c("Bitcoin", "OMXH25"),
+          ncol = 1, nrow = 2)
+```
+
+
+### Correlation between SPY and OMXH25
+```{r, echo=FALSE}
+ggarrange(CS4, CS3.3, 
+          labels = c("SPY", "OMXH25"),
+          ncol = 1, nrow = 2)
+```
+
+
+### Correlation between SPY and Bitcoin
+```{r, echo=FALSE}
+ggarrange(CS4, CS2, 
+          labels = c("SPY", "Bitcoin"),
+          ncol = 1, nrow = 2)
+```
+
